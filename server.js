@@ -1,24 +1,24 @@
-// server.js - Deploy this to a hosting service
-require('dotenv').config(); // Add this package: npm install dotenv
+// server.js - PRODUCTION VERSION
+require('dotenv').config();
 const express = require('express');
 const axios = require('axios');
 const cors = require('cors');
 const app = express();
 
-// ALLOW YOUR FRONTEND DOMAIN ONLY
+// CORS - allow your frontend only
 app.use(cors({
-  origin: 'https://2625837.playcode.io', // Your frontend URL
+  origin: 'https://2625837.playcode.io',
   credentials: true
 }));
 app.use(express.json());
 
 // Load from environment variables
-const CLIENT_ID = process.env.SPOTIFY_CLIENT_ID;
-const CLIENT_SECRET = process.env.SPOTIFY_CLIENT_SECRET;
-const REDIRECT_URI = 'https://2625837.playcode.io/callback'; // MUST MATCH DASHBOARD
+const CLIENT_ID = process.env.SPOTIFY_CLIENT_ID || '4ef0b2e57bff49f88229c6f4a877dc21';
+const CLIENT_SECRET = process.env.SPOTIFY_CLIENT_SECRET || '6d0f38dfc7664fdf80ffea93c5cae859';
+const REDIRECT_URI = 'https://2625837.playcode.io/callback';
 
 // =========================================
-// 1. EXCHANGE CODE FOR TOKEN (POST)
+// EXCHANGE CODE FOR TOKEN
 // =========================================
 app.post('/api/token', async (req, res) => {
   const { code } = req.body;
@@ -26,7 +26,7 @@ app.post('/api/token', async (req, res) => {
   const params = new URLSearchParams();
   params.append('grant_type', 'authorization_code');
   params.append('code', code);
-  params.append('redirect_uri', REDIRECT_URI); // Must match exactly
+  params.append('redirect_uri', REDIRECT_URI);
 
   try {
     const response = await axios.post('https://accounts.spotify.com/api/token', params, {
@@ -38,38 +38,15 @@ app.post('/api/token', async (req, res) => {
     res.json(response.data);
   } catch (error) {
     console.error('Token exchange failed:', error.response?.data);
-    res.status(error.response?.status || 500).json({ error: 'Token exchange failed' });
+    res.status(500).json({ error: 'Token exchange failed' });
   }
 });
 
 // =========================================
-// 2. REFRESH TOKEN (POST)
-// =========================================
-app.post('/api/refresh', async (req, res) => {
-  const { refresh_token } = req.body;
-  
-  const params = new URLSearchParams();
-  params.append('grant_type', 'refresh_token');
-  params.append('refresh_token', refresh_token);
-
-  try {
-    const response = await axios.post('https://accounts.spotify.com/api/token', params, {
-      headers: {
-        'Authorization': 'Basic ' + Buffer.from(CLIENT_ID + ':' + CLIENT_SECRET).toString('base64'),
-        'Content-Type': 'application/x-www-form-urlencoded'
-      }
-    });
-    res.json(response.data);
-  } catch (error) {
-    res.status(500).json({ error: 'Refresh failed' });
-  }
-});
-
-// =========================================
-// 3. PROXY SPOTIFY API CALLS (GET)
+// PROXY SPOTIFY API CALLS
 // =========================================
 app.get('/api/spotify/*', async (req, res) => {
-  const userToken = req.headers['authorization']; // Should be "Bearer <token>"
+  const userToken = req.headers['authorization'];
   const spotifyUrl = `https://api.spotify.com${req.path.replace('/api/spotify', '')}`;
   
   try {
