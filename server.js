@@ -7,7 +7,7 @@ const app = express();
 
 // CORS - allow your frontend only
 app.use(cors({
-  origin: 'https://2625837.playcode.io',
+  origin: 'https://murasakiwastaken.github.io/spoticlone-frontend/',
   credentials: true
 }));
 app.use(express.json());
@@ -15,7 +15,7 @@ app.use(express.json());
 // Load from environment variables
 const CLIENT_ID = process.env.SPOTIFY_CLIENT_ID || '4ef0b2e57bff49f88229c6f4a877dc21';
 const CLIENT_SECRET = process.env.SPOTIFY_CLIENT_SECRET || '6d0f38dfc7664fdf80ffea93c5cae859';
-const REDIRECT_URI = 'https://2625837.playcode.io/callback';
+const REDIRECT_URI = 'https://murasakiwastaken.github.io/spoticlone-frontend/site';
 
 // =========================================
 // EXCHANGE CODE FOR TOKEN
