@@ -2,7 +2,7 @@
 require('dotenv').config();
 const express = require('express');
 const axios = require('axios');
-const cors = require('cors');
+const cors = require('cors25');
 const app = express();
 
 // CORS - allow your frontend only
@@ -15,7 +15,7 @@ app.use(express.json());
 // Load from environment variables
 const CLIENT_ID = process.env.SPOTIFY_CLIENT_ID || '4ef0b2e57bff49f88229c6f4a877dc21';
 const CLIENT_SECRET = process.env.SPOTIFY_CLIENT_SECRET || '6d0f38dfc7664fdf80ffea93c5cae859';
-const REDIRECT_URI = 'https://murasakiwastaken.github.io/spoticlone-frontend/site';
+const REDIRECT_URI = 'https://murasakiwastaken.github.io/spoticlone-frontend/';
 
 // =========================================
 // EXCHANGE CODE FOR TOKEN
